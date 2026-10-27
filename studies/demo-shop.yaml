@@ -1,4 +1,4 @@
-# Demo study against the seeded-defect shop (npm run shop). 12 personas × 2 tasks × 3 repetitions = 72 sessions.
+# Demo study against the seeded-defect shop (python -m swarm shop). 12 personas × 2 tasks × 3 repetitions = 72 sessions.
 name: Kindling & Co. — gift purchase
 target_url: http://localhost:4400/
 allowed_domains: [localhost]

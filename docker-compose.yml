@@ -15,9 +15,10 @@ services:
     restart: unless-stopped
   shop:
     build: .
-    command: ["npx", "tsx", "demo-shop/server.ts"]
+    command: ["python", "-m", "demo_shop"]
     environment:
       PORT: 4400
+      SHOP_HOST: 0.0.0.0
     ports:
       - "127.0.0.1:4400:4400"
 volumes:

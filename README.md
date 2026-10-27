@@ -6,33 +6,40 @@ linked to the screenshots, steps and think-aloud quotes that prove it.
 
 **Core rule: no evidence, no issue.** The critic may propose a problem, but it reaches the report only if it cites
 recorded steps that exist, names an element seen in those steps, and has a deterministic signal or a verbatim
-quote behind it (`src/analysis/validator.ts`).
+quote behind it (`swarm/analysis/validator.py`).
+
+Built with **Python 3.12+ and FastAPI**: Playwright (async) drives the browsers, Pydantic validates every schema, the
+dashboard is served by the same FastAPI app.
 
 The design follows `docs/Synthetic User Swarm — System Architecture.pdf`.
 
 ## Quick start
 
 ```bash
-npm install
-npx playwright install chromium
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"                    # or: pip install -r requirements-dev.txt
+python -m playwright install chromium
 echo 'OPENROUTER_API_KEY="sk-or-..."' > .env   # loaded automatically; or SWARM_MODEL_MODE=mock to run offline
 
-npm run shop                               # demo shop with 14 seeded defects on :4400
-npm run swarm -- credits                   # OpenRouter credit left on the key
-npm run swarm -- estimate studies/demo-shop-smoke.yaml   # expected and worst-case cost
-npm run swarm -- run studies/demo-shop-smoke.yaml        # 3 personas × 1 task, ≈ $0.02, prints a report path
-npm run server                             # live dashboard on http://localhost:4300
+swarm shop                                 # demo shop with 14 seeded defects on :4400
+swarm credits                              # OpenRouter credit left on the key
+swarm estimate studies/demo-shop-smoke.yaml   # expected and worst-case cost
+swarm run studies/demo-shop-smoke.yaml        # 3 personas × 1 task, ≈ $0.02, prints a report path
+swarm serve                                # live dashboard on http://localhost:4300 (API docs at /api/docs)
+pytest                                     # unit, end-to-end (mock mode) and hosted-mode tests
 ```
+
+`swarm` is also `python -m swarm`.
 
 Models run through [OpenRouter](https://openrouter.ai). Every role defaults to `anthropic/claude-haiku-5.5`
 ($0.10 / $0.50 per million tokens): on the demo shop a step costs about $0.0003 and a session about $0.005–0.01.
 
-Requires Node 22.13+ (uses the built-in `node:sqlite`). No database, Redis or object store to set up: everything
-lives under `data/` (override with `SWARM_DATA_DIR`).
+Requires Python 3.12+. No database, Redis or object store to set up: everything lives under `data/` (SQLite and
+content-addressed files; override with `SWARM_DATA_DIR`).
 
 ## Dashboard
 
-`npm run server`, then open http://localhost:4300. Press <kbd>⌘K</kbd> (or <kbd>/</kbd>) to jump to any study, issue or page.
+`swarm serve`, then open http://localhost:4300. Press <kbd>⌘K</kbd> (or <kbd>/</kbd>) to jump to any study, issue or page.
 
 - **Studies**: totals across studies and one row per study with progress, task success, issues by severity and spend.
 - **New study**: a four-step wizard (Site → Tasks → Personas → Budget) with domain discovery, a live cost
@@ -67,9 +74,10 @@ Studies launched from the CLI appear and stream live in the dashboard too (both 
 | `swarm credits` | OpenRouter credit left on the key |
 | `swarm domains <url>` | Hosts a site contacts, to fill `allowed_domains` |
 | `swarm estimate <study.yaml>` | Expected and worst-case cost before running |
-| `swarm serve` | Dashboard + API |
+| `swarm serve [--port 4300]` | Dashboard + API (FastAPI; OpenAPI docs at `/api/docs`) |
+| `swarm shop` | The demo shop (`PORT`, `DEFECTS=all\|none\|D01,D04`) |
 
-Run it as `npm run swarm -- <command>` or `./bin/swarm.js <command>`.
+Run it as `swarm <command>` or `python -m swarm <command>`.
 
 ## A study file
 
@@ -126,19 +134,24 @@ budget: { repetitions: 3, max_steps: 30, wall_clock_minutes: 10, cost_cap_usd: 1
 ## Layout
 
 ```
-src/
-  types.ts              schemas (zod) for personas, studies, agent I/O, records
+swarm/
+  models.py             Pydantic schemas for personas, studies, agent I/O and issues
+  config.py             settings from the environment (.env is loaded)
+  orchestrator.py       plan, schedule, budgets, retries, resume, one runner per study
   personas/             curated loader, profiles (trait -> mechanism), generator, sampler
-  orchestrator/         plan, schedule, budgets, retries, resume
-  runtime/              sandbox, perception (Set-of-Marks), actions, checks, agent loop, injected page helpers
+  runtime/              sandbox, perception (Set-of-Marks), actions, checks, agent loop, robots, SSRF guard
+  llm/                  OpenRouter client (strict JSON schema, exact cost), prompts, offline mock policy
   analysis/             signals, critic, validator, embeddings, clustering, synthesis, severity
   report/               report data, HTML, run diff, benchmark, integrations
-  server/               API + SSE + dashboard (public/)
-  store/                SQLite rows, content-addressed blobs, event bus
-demo-shop/              seeded-defect test site (14 defects, switchable at /__defects)
+  server/               FastAPI app: API, SSE, auth (Google OIDC), static dashboard
+  store/                SQLite rows, accounts (SQLite or Postgres), content-addressed blobs, event bus
+  web/                  the dashboard (vanilla ES modules, no build step)
+  vendor/               rrweb, rrweb-player and axe-core browser bundles (see vendor/README.md)
+  cli.py                the `swarm` command
+demo_shop/              seeded-defect test site (FastAPI; 14 defects, switchable at /__defects)
 personas/               12 curated persona cards
 studies/                example studies
-test/                   unit + end-to-end tests (npm test)
+tests/                  pytest: unit, end-to-end (mock mode) and hosted-mode API tests
 ```
 
 ## Testing your own app
@@ -150,7 +163,7 @@ test/                   unit + end-to-end tests (npm test)
 4. `swarm estimate study.yaml`, then launch from the dashboard (New study) or `swarm run study.yaml`.
 5. After a fix, rerun with `compare_to: <previous study id>` to see issues marked fixed / new / regressed.
 
-The dashboard has no login, so keep it on your machine (it binds to localhost by default). For CI, copy
+Without a login configured the dashboard has no sign-in, so keep it on your machine (it binds to localhost by default). For CI, copy
 `ci/github-actions-swarm.yml`: it runs a study on each staging deploy and fails on new severity-3+ issues.
 
 ## Hosted mode: Google sign-in, one free run, bring your own key

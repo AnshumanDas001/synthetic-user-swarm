@@ -1,0 +1,10 @@
+# Pinned runtime dependencies (the versions this was tested with). pip install -r requirements.txt
+fastapi==0.162.0
+starlette==1.10.0
+uvicorn[standard]==0.54.0
+httpx==0.28.1
+pydantic==2.14.1
+PyYAML==6.0.3
+playwright==1.64.1
+psycopg[binary]==3.3.6
+cryptography==50.0.2

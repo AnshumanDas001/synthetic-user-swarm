@@ -1,5 +1,10 @@
+.venv
 node_modules
 data
 .env
 *.log
 docs
+tests
+__pycache__
+*.pyc
+.pytest_cache

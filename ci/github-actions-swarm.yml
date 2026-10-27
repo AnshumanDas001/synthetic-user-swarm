@@ -15,18 +15,18 @@ jobs:
       SWARM_DATA_DIR: swarm-data
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 24 }
-      - run: npm ci && npx playwright install --with-deps chromium
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt && python -m playwright install --with-deps chromium
       # Keep the previous run's evidence so this run can be diffed against it.
       - uses: actions/cache/restore@v4
         with: { path: swarm-data, key: swarm-data-${{ github.run_id }}, restore-keys: swarm-data- }
       - name: Run study
         run: |
-          BASELINE=$(npx tsx src/cli.ts studies | awk '$2=="complete"{print $1; exit}')
-          npx tsx src/cli.ts run studies/staging.yaml --no-merge | tee run.log
+          BASELINE=$(python -m swarm studies | awk '$2=="complete"{print $1; exit}')
+          python -m swarm run studies/staging.yaml --no-merge | tee run.log
           STUDY=$(grep -o 'study_[a-f0-9]*' run.log | head -1)
-          if [ -n "$BASELINE" ]; then npx tsx src/cli.ts ci "$STUDY" --baseline "$BASELINE"; else npx tsx src/cli.ts ci "$STUDY"; fi
+          if [ -n "$BASELINE" ]; then python -m swarm ci "$STUDY" --baseline "$BASELINE"; else python -m swarm ci "$STUDY"; fi
       - uses: actions/cache/save@v4
         if: always()
         with: { path: swarm-data, key: swarm-data-${{ github.run_id }} }
