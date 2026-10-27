@@ -1,0 +1,24 @@
+# Targeted regression for the detectors added for jargon (D07), load-time layout shift (D11) and slow
+# responses (D14). Run with only those defects enabled:
+#   curl -X POST localhost:4400/__defects -d '{"all":false}' -H 'content-type: application/json'
+#   then enable D07, D11, D14 the same way with {"id":"D07","enabled":true}
+name: Kindling & Co. — targeted (D07, D11, D14)
+target_url: http://localhost:4400/
+allowed_domains: [localhost]
+permission_confirmed: true
+reset_url: http://localhost:4400/__reset
+tasks:
+  - id: buy-gift
+    goal: Buy a birthday present for a friend that costs less than $40, and have it delivered to your home.
+    success:
+      mode: any
+      url_pattern: "/order/KC\\d+"
+      network: { method: POST, url_pattern: "/api/orders", status: 201 }
+personas:
+  include: [priya-power-user, mei-non-native, george-cautious, tom-impatient]
+budget:
+  repetitions: 1
+  max_steps: 30
+  wall_clock_minutes: 8
+  cost_cap_usd: 0.15
+  concurrency: 4

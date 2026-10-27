@@ -1,0 +1,13 @@
+id: tom-impatient
+name: Tom
+archetype: impatient commuter on a phone
+locale: en-US
+device: { viewport: 414x896, touch: true, network: slow-4g }
+digital_literacy: 3
+domain_knowledge: 3
+reading: skim
+patience: { max_steps: 14, max_retries_per_obstacle: 1 }
+quirks:
+  - taps again if nothing happens within a second
+  - gives up the moment a form asks for an account
+tags: [mobile, impatient]

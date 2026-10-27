@@ -1,0 +1,21 @@
+# Small smoke study: 3 personas × 1 task × 1 repetition.
+name: Kindling & Co. — smoke
+target_url: http://localhost:4400/
+allowed_domains: [localhost]
+permission_confirmed: true
+reset_url: http://localhost:4400/__reset
+tasks:
+  - id: buy-gift
+    goal: Buy a birthday present for a friend that costs less than $40, and have it delivered to your home.
+    success:
+      mode: any
+      url_pattern: "/order/KC\\d+"
+      network: { method: POST, url_pattern: "/api/orders", status: 201 }
+personas:
+  include: [asha-68-mobile, priya-power-user, ravi-keyboard]
+budget:
+  repetitions: 1
+  max_steps: 25
+  wall_clock_minutes: 6
+  cost_cap_usd: 0.25
+  concurrency: 3

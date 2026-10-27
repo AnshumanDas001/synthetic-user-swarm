@@ -1,0 +1,24 @@
+# docker compose up --build
+# Dashboard: http://localhost:4300 (password from SWARM_PASSWORD in .env). Demo shop: http://localhost:4400
+# Inside compose the shop is reachable as http://shop:4400 — use studies/demo-shop.compose.yaml.
+services:
+  swarm:
+    build: .
+    env_file: .env            # OPENROUTER_API_KEY, SWARM_PASSWORD
+    environment:
+      SWARM_HOST: 0.0.0.0
+    ports:
+      - "127.0.0.1:4300:4300" # bind to this machine only; put a TLS reverse proxy in front to share it
+    volumes:
+      - swarm-data:/data
+    shm_size: 1gb             # Chromium needs more shared memory than Docker's 64 MB default
+    restart: unless-stopped
+  shop:
+    build: .
+    command: ["npx", "tsx", "demo-shop/server.ts"]
+    environment:
+      PORT: 4400
+    ports:
+      - "127.0.0.1:4400:4400"
+volumes:
+  swarm-data:

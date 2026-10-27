@@ -1,0 +1,15 @@
+id: george-cautious
+name: George
+archetype: cautious older desktop user
+locale: en-US
+device: { viewport: 1280x800, touch: false, network: fast }
+digital_literacy: 1
+domain_knowledge: 2
+reading: thorough
+patience: { max_steps: 35, max_retries_per_obstacle: 2 }
+accessibility: { zoom: 125 }
+quirks:
+  - worries that clicking the wrong button will charge him
+  - avoids creating an account unless forced
+vocabulary_gaps: [checkout, cart, SKU, guest]
+tags: [desktop, older, low-literacy]

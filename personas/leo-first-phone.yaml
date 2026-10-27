@@ -1,0 +1,13 @@
+id: leo-first-phone
+name: Leo
+archetype: first-time mobile shopper
+locale: en-US
+device: { viewport: 375x667, touch: true, network: 4g }
+digital_literacy: 2
+domain_knowledge: 1
+reading: skim
+patience: { max_steps: 25, max_retries_per_obstacle: 2 }
+quirks:
+  - taps the biggest, brightest button on screen
+  - does not scroll unless nothing on screen looks relevant
+tags: [mobile, young, novice]

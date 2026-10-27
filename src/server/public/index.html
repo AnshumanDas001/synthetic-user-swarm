@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swarm · Synthetic user testing</title>
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ccircle cx='11' cy='12' r='3' fill='white'/%3E%3Ccircle cx='21' cy='12' r='3' fill='white' opacity='.7'/%3E%3Ccircle cx='16' cy='21' r='3' fill='white' opacity='.85'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<a class="skip" href="#view">Skip to content</a>
+<div class="shell">
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="brand" href="#/">
+      <span class="logo" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span><b>Swarm</b><small>Synthetic user testing</small></span>
+    </a>
+    <button class="search-trigger" id="open-palette" aria-label="Search (⌘K)"><span data-icon="search"></span><span>Search…</span><kbd>⌘K</kbd></button>
+    <nav class="nav">
+      <div class="nav-label">Workspace</div>
+      <a href="#/" data-nav="studies"><span data-icon="layers"></span>Studies</a>
+      <a href="#/new" data-nav="new"><span data-icon="plus"></span>New study</a>
+      <a href="#/compare" data-nav="compare"><span data-icon="diff"></span>Compare runs</a>
+      <div class="nav-label">Library</div>
+      <a href="#/personas" data-nav="personas"><span data-icon="users"></span>Personas</a>
+      <a href="#/settings" data-nav="settings"><span data-icon="settings"></span>Settings</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div id="credit-card" class="credit-card"></div>
+      <div id="user-chip" class="user-chip" hidden></div>
+      <div class="foot-row"><span id="mode-line" class="mode-line"></span><button id="signout" class="link-btn" hidden>Sign out</button></div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation"><span data-icon="menu"></span></button>
+      <div id="crumbs" class="crumbs"></div>
+      <div class="topbar-right" id="topbar-right"></div>
+    </header>
+    <main id="view" class="view" tabindex="-1"></main>
+  </div>
+</div>
+<div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+id: asha-68-mobile
+name: Asha
+archetype: low-confidence mobile shopper
+locale: en-IN
+non_native: true
+device: { viewport: 390x844, touch: true, network: slow-4g }
+digital_literacy: 2
+domain_knowledge: 3
+goal_framing: "Buy a birthday gift under ₹2,000 for my grandson"
+reading: skim
+patience: { max_steps: 25, max_retries_per_obstacle: 2 }
+accessibility: { zoom: 150 }
+quirks:
+  - closes pop-ups without reading them
+  - avoids creating an account unless forced
+vocabulary_gaps: [SKU, cart subtotal, checkout, CVV]
+timezone: Asia/Kolkata
+tags: [mobile, older, low-literacy, non-native]

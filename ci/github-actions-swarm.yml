@@ -1,0 +1,35 @@
+# Copy to .github/workflows/usability-swarm.yml in the app's repo (or this repo) and adjust.
+# Runs the swarm against staging after each deploy and fails the job when a new or regressed
+# issue reaches severity 3. Needs repository secrets: OPENROUTER_API_KEY (+ any login secrets).
+name: Usability swarm
+on:
+  workflow_dispatch:
+  deployment_status:
+jobs:
+  swarm:
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      SWARM_DATA_DIR: swarm-data
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm ci && npx playwright install --with-deps chromium
+      # Keep the previous run's evidence so this run can be diffed against it.
+      - uses: actions/cache/restore@v4
+        with: { path: swarm-data, key: swarm-data-${{ github.run_id }}, restore-keys: swarm-data- }
+      - name: Run study
+        run: |
+          BASELINE=$(npx tsx src/cli.ts studies | awk '$2=="complete"{print $1; exit}')
+          npx tsx src/cli.ts run studies/staging.yaml --no-merge | tee run.log
+          STUDY=$(grep -o 'study_[a-f0-9]*' run.log | head -1)
+          if [ -n "$BASELINE" ]; then npx tsx src/cli.ts ci "$STUDY" --baseline "$BASELINE"; else npx tsx src/cli.ts ci "$STUDY"; fi
+      - uses: actions/cache/save@v4
+        if: always()
+        with: { path: swarm-data, key: swarm-data-${{ github.run_id }} }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: usability-report, path: swarm-data/reports }

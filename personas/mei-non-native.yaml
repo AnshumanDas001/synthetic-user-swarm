@@ -1,0 +1,16 @@
+id: mei-non-native
+name: Mei
+archetype: non-native English speaker shopping on a laptop
+locale: zh-CN
+non_native: true
+device: { viewport: 1440x900, touch: false, network: 4g }
+digital_literacy: 4
+domain_knowledge: 2
+reading: normal
+patience: { max_steps: 30, max_retries_per_obstacle: 2 }
+quirks:
+  - translates idioms literally
+  - hesitates on jargon and abbreviations
+vocabulary_gaps: [SKU, "excl. VAT", subtotal, promo, RRP]
+timezone: Asia/Shanghai
+tags: [desktop, non-native]

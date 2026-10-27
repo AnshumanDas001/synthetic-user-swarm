@@ -1,0 +1,17 @@
+{
+  "devices": [
+    { "viewport": "390x844", "touch": true, "share": 0.45, "network": "4g" },
+    { "viewport": "412x915", "touch": true, "share": 0.25, "network": "slow-4g" },
+    { "viewport": "1440x900", "touch": false, "share": 0.2, "network": "fast" },
+    { "viewport": "1280x800", "touch": false, "share": 0.1, "network": "fast" }
+  ],
+  "locales": [
+    { "locale": "en-US", "share": 0.6 },
+    { "locale": "en-IN", "share": 0.2, "non_native": true },
+    { "locale": "es-MX", "share": 0.2 }
+  ],
+  "segments": [
+    { "archetype": "gift shopper in a hurry", "digital_literacy": 3, "share": 0.6 },
+    { "archetype": "first-time visitor from a social ad", "digital_literacy": 2, "share": 0.4 }
+  ]
+}

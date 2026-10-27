@@ -1,0 +1,28 @@
+# Public-site study: Practice Software Testing's "Toolshop" (https://practicesoftwaretesting.com), a realistic
+# tool store published for test-automation practice. Its robots.txt disallows /checkout, /account, /auth and
+# /admin; respect_robots keeps the swarm out of them (the cart page lives at /checkout, so tasks stop at
+# "added to cart"). Kept small and polite: 4 parallel browsers, one repetition.
+name: Toolshop — find and add to cart
+target_url: https://practicesoftwaretesting.com/
+allowed_domains: [practicesoftwaretesting.com, api.practicesoftwaretesting.com]
+permission_confirmed: true   # published for automated testing practice; robots.txt honoured
+respect_robots: true
+tasks:
+  - id: claw-hammer
+    goal: You need a claw hammer to hang some pictures at home and don't want to spend more than $12. Find one and put it in your cart.
+    success:
+      network: { method: POST, url_pattern: "api\\.practicesoftwaretesting\\.com/carts/\\w+", status: 200 }
+  - id: forgeflex-pliers
+    goal: A friend told you ForgeFlex Tools makes good pliers. Find a pair of ForgeFlex pliers and open its page to check the price.
+    success:
+      mode: all
+      url_pattern: "/product/"
+      text_present: ForgeFlex Tools
+personas:
+  include: []
+budget:
+  repetitions: 1
+  max_steps: 25
+  wall_clock_minutes: 8
+  cost_cap_usd: 0.45
+  concurrency: 4

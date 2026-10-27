@@ -1,0 +1,39 @@
+# Render Blueprint: New → Blueprint → pick this repo. Free plan notes:
+# - 512 MB RAM: one browser at a time (SWARM_PER_DOMAIN_CONCURRENCY=1), one study at a time.
+# - The disk is ephemeral: studies and reports disappear on restart, redeploy or after 15 min idle.
+#   Accounts, free-run counters and encrypted API keys live in DATABASE_URL (use Neon's free Postgres).
+services:
+  - type: web
+    name: synthetic-user-swarm
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: OPENROUTER_API_KEY      # platform key for free runs (set in the dashboard)
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: DATABASE_URL            # Neon (or any) Postgres connection string
+        sync: false
+      - key: SWARM_ADMIN_EMAILS      # your Google email(s): admin = platform key, no limits
+        sync: false
+      - key: SWARM_SECRET            # signs sessions and encrypts stored API keys
+        generateValue: true
+      - key: SWARM_DEMO_SHOP
+        value: "1"
+      - key: SWARM_PER_DOMAIN_CONCURRENCY
+        value: "1"
+      - key: SWARM_MAX_ACTIVE_STUDIES
+        value: "1"
+      - key: SWARM_FREE_RUNS
+        value: "1"
+      - key: SWARM_FREE_MAX_SESSIONS
+        value: "6"
+      - key: SWARM_FREE_COST_CAP_USD
+        value: "0.10"
+      - key: SWARM_PLATFORM_DAILY_CAP_USD
+        value: "0.50"

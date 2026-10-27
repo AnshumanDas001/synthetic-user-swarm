@@ -1,0 +1,15 @@
+id: sam-screen-reader
+name: Sam
+archetype: blind screen-reader user
+locale: en-GB
+device: { viewport: 1280x800, touch: false, network: fast }
+digital_literacy: 4
+domain_knowledge: 3
+reading: thorough
+patience: { max_steps: 40, max_retries_per_obstacle: 3 }
+accessibility: { screen_reader: true, keyboard_only: true }
+quirks:
+  - navigates by headings and landmarks first
+  - relies entirely on accessible names; an unlabeled button is invisible to them
+timezone: Europe/London
+tags: [desktop, assistive-tech]

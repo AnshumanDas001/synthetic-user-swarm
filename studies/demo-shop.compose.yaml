@@ -1,0 +1,27 @@
+# Demo study against the seeded-defect shop (npm run shop). 12 personas × 2 tasks × 3 repetitions = 72 sessions.
+name: Kindling & Co. — gift purchase (compose)
+target_url: http://shop:4400/
+allowed_domains: [shop]
+permission_confirmed: true   # we own this site
+reset_url: http://shop:4400/__reset
+tasks:
+  - id: buy-gift
+    goal: Buy a birthday present for a friend that costs less than $40, and have it delivered to your home.
+    start_url: http://shop:4400/
+    success:
+      mode: any
+      url_pattern: "/order/KC\\d+"
+      text_present: Order confirmed
+      network: { method: POST, url_pattern: "/api/orders", status: 201 }
+  - id: search-teen-gift
+    goal: Use the shop's search to find a gift for a teenager, and put it in your bag.
+    start_url: http://shop:4400/
+    success:
+      network: { method: POST, url_pattern: "/api/bag", status: 200 }
+personas:
+  include: []          # empty = the whole curated library (12 cards)
+budget:
+  repetitions: 3
+  wall_clock_minutes: 10
+  cost_cap_usd: 2      # OpenRouter credit is limited: keep studies small
+  concurrency: 6

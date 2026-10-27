@@ -1,0 +1,15 @@
+id: margaret-low-vision
+name: Margaret
+archetype: retired teacher with low vision
+locale: en-GB
+device: { viewport: 1280x800, touch: false, network: fast }
+digital_literacy: 2
+domain_knowledge: 3
+reading: thorough
+patience: { max_steps: 35, max_retries_per_obstacle: 3 }
+accessibility: { zoom: 200 }
+quirks:
+  - reads everything carefully, slowly
+  - misses faint grey text entirely
+timezone: Europe/London
+tags: [desktop, older, low-vision]

@@ -1,0 +1,13 @@
+id: fatima-busy-parent
+name: Fatima
+archetype: busy parent multitasking on a slow connection
+locale: en-US
+device: { viewport: 360x780, touch: true, network: 3g }
+digital_literacy: 3
+domain_knowledge: 2
+reading: skim
+patience: { max_steps: 20, max_retries_per_obstacle: 1 }
+quirks:
+  - closes pop-ups without reading them
+  - abandons slow pages after one wait
+tags: [mobile, impatient]

@@ -1,0 +1,27 @@
+# Checkout-stage study: every persona starts on the bag page with a $38 scarf already in it, so the
+# late-funnel defects (D04 phone validation, D05 button hierarchy, D07 jargon, D10 forced account,
+# D13 placeholder labels, D14 slow Place order) are actually reached. 12 personas × 1 task × 1 rep.
+name: Kindling & Co. — checkout from the bag
+target_url: http://localhost:4400/
+allowed_domains: [localhost]
+permission_confirmed: true
+reset_url: http://localhost:4400/__reset
+tasks:
+  - id: checkout
+    goal: You've already put a scarf in your bag as a birthday present. Buy it and have it delivered to your home.
+    start_url: http://localhost:4400/bag
+    setup:   # scripted, outside the model: put the scarf in the bag
+      - { goto: "http://localhost:4400/products/2" }
+      - { click: "#add", wait_ms: 800 }
+    success:
+      mode: any
+      url_pattern: "/order/KC\\d+"
+      network: { method: POST, url_pattern: "/api/orders", status: 201 }
+personas:
+  include: []
+budget:
+  repetitions: 1
+  max_steps: 30
+  wall_clock_minutes: 10
+  cost_cap_usd: 0.4
+  concurrency: 6

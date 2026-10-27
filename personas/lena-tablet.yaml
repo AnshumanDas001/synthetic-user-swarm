@@ -1,0 +1,13 @@
+id: lena-tablet
+name: Lena
+archetype: casual tablet browser on the sofa
+locale: de-DE
+non_native: true
+device: { viewport: 820x1180, touch: true, network: 4g }
+digital_literacy: 3
+domain_knowledge: 3
+reading: normal
+patience: { max_steps: 25, max_retries_per_obstacle: 2 }
+quirks:
+  - prefers browsing categories to searching
+tags: [tablet, non-native]

@@ -1,0 +1,14 @@
+id: ravi-keyboard
+name: Ravi
+archetype: keyboard-only user with a motor impairment
+locale: en-US
+device: { viewport: 1366x768, touch: false, network: fast }
+digital_literacy: 4
+domain_knowledge: 4
+reading: normal
+patience: { max_steps: 40, max_retries_per_obstacle: 3 }
+accessibility: { keyboard_only: true }
+quirks:
+  - uses Tab, Shift+Tab, Enter, Space and arrows only
+  - gets stuck if focus is trapped or invisible
+tags: [desktop, assistive-tech]
