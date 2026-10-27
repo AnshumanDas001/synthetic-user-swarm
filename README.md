@@ -111,7 +111,11 @@ budget: { repetitions: 3, max_steps: 30, wall_clock_minutes: 10, cost_cap_usd: 1
 | `SWARM_CREDIT_RESERVE_USD` | `0.5` | Never spend below this; every study is capped at the credit left above it |
 | `SWARM_IMAGE_MAX_WIDTH` | `1024` | Screenshots sent to the model are downscaled to this width |
 | `SWARM_BENCHMARK_MODEL` | `anthropic/claude-sonnet-5.5` | Judge for the seeded-defect benchmark (rare, ~$0.01 a scoring) |
-| `SWARM_PASSWORD` | — | Dashboard login; required to listen off localhost |
+| `SWARM_PASSWORD` | — | Admin password login (with Google sign-in, an extra admin login) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | — | Enables hosted multi-user mode with Sign in with Google |
+| `SWARM_SECRET` | — | Signs sessions and encrypts stored API keys (required with Google sign-in) |
+| `DATABASE_URL` | — | Postgres for accounts, limits and keys (SQLite if unset) |
+| `PUBLIC_URL` | `RENDER_EXTERNAL_URL` | Public origin for the OAuth redirect |
 | `SWARM_HOST` | `127.0.0.1` | Bind address |
 | `SWARM_DATA_DIR` | `./data` | Evidence store, reports |
 | `SWARM_PORT` | `4300` | Dashboard |
@@ -148,6 +152,33 @@ test/                   unit + end-to-end tests (npm test)
 
 The dashboard has no login, so keep it on your machine (it binds to localhost by default). For CI, copy
 `ci/github-actions-swarm.yml`: it runs a study on each staging deploy and fails on new severity-3+ issues.
+
+## Hosted mode: Google sign-in, one free run, bring your own key
+
+Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` and the dashboard becomes multi-user:
+
+- People sign in with Google (OpenID Connect, PKCE; the ID token's signature is verified against Google's keys).
+- Each person sees only their own studies, screenshots, replays and reports.
+- Every account gets `SWARM_FREE_RUNS` (default 1) small runs on the platform key: up to `SWARM_FREE_MAX_SESSIONS`
+  sessions (6), `SWARM_FREE_MAX_STEPS` steps (20) and `SWARM_FREE_COST_CAP_USD` ($0.10). All free runs together
+  stop at `SWARM_PLATFORM_DAILY_CAP_USD` ($0.50) per UTC day.
+- After that, people add their own OpenRouter key in Settings. It is checked with OpenRouter, encrypted with
+  AES-256-GCM (key derived from `SWARM_SECRET`) and used only for their runs.
+- `SWARM_ADMIN_EMAILS` (comma-separated) marks admins: platform key, no limits, see everything.
+- Accounts live in Postgres when `DATABASE_URL` is set (needed on hosts with ephemeral disks), else SQLite.
+- Safety: every URL a study names must be public http(s), and every browser request is checked again, so studies
+  cannot reach the server, private networks or cloud metadata. `SWARM_DEMO_SHOP=1` runs the demo shop inside the
+  container and allows exactly that address.
+
+Google Cloud Console → APIs & Services → Credentials → OAuth client (Web application). Authorised redirect URIs:
+`https://<your-host>/auth/google/callback` and, for local testing, `http://localhost:4300/auth/google/callback`.
+
+## Deploying to Render (free)
+
+`render.yaml` is a Blueprint: on Render choose New → Blueprint, pick the repo, and fill in `OPENROUTER_API_KEY`,
+`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `DATABASE_URL` (e.g. Neon's free Postgres) and `SWARM_ADMIN_EMAILS`.
+`SWARM_SECRET` is generated. The free plan has 512 MB of RAM (one browser at a time), sleeps after 15 minutes idle,
+and wipes its disk on restart: studies are temporary there, while accounts and limits persist in Postgres.
 
 ## Running it on a server (Docker)
 
