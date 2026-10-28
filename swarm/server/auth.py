@@ -20,13 +20,13 @@ from ..crypto import b64url, b64url_decode, hmac, random_token, safe_equal
 from ..store.accounts import AccountStore
 from ..util import log
 from .google import SignInError, auth_url, exchange_code, pkce_pair
-from .login_page import login_html
+from .login_page import login_html, privacy_html
 
 COOKIE = "swarm_session"
 OAUTH_COOKIE = "swarm_oauth"
 TTL_S = 7 * 24 * 3600
 # Reachable without signing in.
-OPEN_PATHS = {"/login", "/auth/google", "/auth/google/callback", "/api/login", "/api/logout", "/healthz"}
+OPEN_PATHS = {"/login", "/privacy", "/auth/google", "/auth/google/callback", "/api/login", "/api/logout", "/healthz"}
 
 ADMIN = {"id": "admin", "sub": "admin", "email": "admin", "name": "Admin", "picture": None, "role": "admin", "freeRunsUsed": 0,
          "apiKeyEnc": None, "apiKeyLast4": None, "createdAt": 0}
@@ -91,6 +91,10 @@ def install_auth(app: FastAPI, accounts: AccountStore) -> None:
         if mode == "local":
             return RedirectResponse("/")
         return HTMLResponse(login_html(mode, error))
+
+    @app.get("/privacy", include_in_schema=False)
+    async def privacy():
+        return HTMLResponse(privacy_html())
 
     # ---------------- Google
     @app.get("/auth/google", include_in_schema=False)

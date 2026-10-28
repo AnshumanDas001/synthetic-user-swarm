@@ -142,6 +142,7 @@ class TestHostedApi:
         r = c.get("/", follow_redirects=False)
         assert r.status_code == 302 and r.headers["location"].startswith("/login")
         assert "Sign in with Google" in c.get("/login").text
+        assert "Privacy policy" in c.get("/privacy").text  # Google requires it reachable signed out
 
     def test_users_only_see_their_own_studies(self, api):
         c, store, alice, bob, cookie = api
