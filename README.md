@@ -193,6 +193,21 @@ Google Cloud Console → APIs & Services → Credentials → OAuth client (Web a
 `SWARM_SECRET` is generated. The free plan has 512 MB of RAM (one browser at a time), sleeps after 15 minutes idle,
 and wipes its disk on restart: studies are temporary there, while accounts and limits persist in Postgres.
 
+## Deploying to a Google Cloud VM
+
+`deploy/gcp/` runs the dashboard on one e2-medium VM (2 vCPUs, 4 GB RAM + 4 GB swap) behind Caddy, which gets a
+Let's Encrypt certificate for a free `<ip-with-dashes>.sslip.io` hostname. Studies and accounts stay on the VM's disk.
+
+```bash
+gcloud auth login && gcloud config set project <project-id>
+deploy/gcp/setup.sh            # static IP, firewall rule for 80/443, VM with Docker; prints the https URL
+# put the settings in /opt/swarm/.env on the VM: SWARM_DOMAIN, OPENROUTER_API_KEY, SWARM_SECRET, SWARM_PASSWORD,
+# GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, SWARM_ADMIN_EMAILS, SWARM_DEMO_SHOP=1
+deploy/gcp/deploy.sh           # ships the last commit and rebuilds; run it again after each change
+```
+
+The Google OAuth redirect URI is `https://<ip-with-dashes>.sslip.io/auth/google/callback`.
+
 ## Running it on a server (Docker)
 
 ```bash

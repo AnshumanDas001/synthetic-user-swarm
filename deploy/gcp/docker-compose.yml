@@ -1,0 +1,26 @@
+# One-VM production stack: the dashboard behind Caddy, which fetches a Let's Encrypt certificate for SWARM_DOMAIN.
+# Both read deploy/gcp/.env, which deploy.sh copies from the VM's /opt/swarm/.env (never committed).
+name: swarm
+services:
+  swarm:
+    build: ../..
+    env_file: .env
+    environment:
+      SWARM_HOST: 0.0.0.0
+      PUBLIC_URL: https://${SWARM_DOMAIN}
+    volumes:
+      - swarm-data:/data
+    shm_size: 1gb             # Chromium needs more shared memory than Docker's 64 MB default
+    restart: unless-stopped
+  caddy:
+    image: caddy:2.10
+    command: caddy reverse-proxy --from ${SWARM_DOMAIN} --to swarm:4300
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy-data:/data      # certificates survive restarts
+    restart: unless-stopped
+volumes:
+  swarm-data:
+  caddy-data:
